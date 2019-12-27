@@ -1,0 +1,110 @@
+import numpy as np
+import numpy.matlib 
+import math as mt
+import matplotlib.pyplot as plt
+def d(a1,a2):
+    return np.sqrt(np.sum((np.abs(a1-a2)**2)))
+def getlist():#从文本中读取取数据
+    fo=open("demo3.txt",'r+')
+    X=[]
+    for str in fo:
+        z=str.split(' ')
+        x=[float(z[0]),float(z[1])]
+        X.append(np.array(x))
+    return X
+
+
+
+X=getlist()
+a1=X[4]
+a2=X[9]
+a3=X[7]
+line1x=[]
+line1y=[]
+line2x=[]
+line2y=[]
+line3x=[]
+line3y=[]
+D1=[]#D 为初始化簇
+D2=[]
+D3=[]
+while 1:#迭代求质点和簇
+    b1=a1
+    b2=a2
+    b3=a3
+    line1x.append(a1[0])#画图用
+    line1y.append(a1[1])
+    plt.plot(a1[0],a1[1],'xb')
+    line2x.append(a2[0])
+    line2y.append(a2[1])
+    plt.plot(a2[0],a2[1],'xr')
+    line3x.append(a3[0])
+    line3y.append(a3[1])
+    plt.plot(a3[0],a3[1],'xg')
+    D1=[]#初始化簇
+    D2=[]
+    D3=[]
+    for i in X:#计算欧氏距离，把最近的添加到各簇中
+        d1=d(a1,i)
+        d2=d(a2,i)
+        d3=d(a3,i)
+        if d1<=d2:
+            if d1<=d3:
+                D1.append(i)
+            else:
+                D3.append(i)
+        else:
+            if d2<=d3:
+                D2.append(i)
+            else:
+                D3.append(i)
+    
+    
+    if len(D1)!=0:#如果簇中没有对象，则质点不变，若有对象则重新计算质点，为各指标的和的平均，下同
+        x=0
+        y=0
+        for j in D1:
+            x+=j[0]
+            y+=j[1]
+        a1=[x/len(D1),y/len(D1)]
+   
+        
+    
+        
+    if len(D2)!=0:
+        x=0
+        y=0
+        for j in D2:
+            x+=j[0]
+            y+=j[1]
+        a2=[x/len(D2),y/len(D2)]
+    
+        
+    if len(D3)!=0:
+        x=0
+        y=0
+        for j in D3:
+            x+=j[0]
+            y+=j[1]
+        a3=[x/len(D3),y/len(D3)]
+    
+        
+    print a1,a2,a3
+    if np.array_equal(a1,b1)&np.array_equal(a2,b2)&np.array_equal(a3,b3):#比较质点是否发生变化（是否收敛）收敛则跳出迭代
+        print '收敛'
+        break
+print D1
+print D2
+print D3
+plt.plot(line1x,line1y)#画出质点的变化路径
+plt.plot(line2x,line2y)
+plt.plot(line3x,line3y)
+
+
+x1=np.array(D1).T#画出各簇中的对象
+plt.plot(x1[0],x1[1],'^b',markersize=1)
+x1=np.array(D2).T
+plt.plot(x1[0],x1[1],'or',markersize=1)
+x1=np.array(D3).T
+plt.plot(x1[0],x1[1],'og',markersize=1)
+plt.show()
